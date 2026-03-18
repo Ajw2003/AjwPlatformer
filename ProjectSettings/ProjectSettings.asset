@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: 46001769d58108247b0f889b4860acfc
+  productGUID: cf3317a7362d1ae46bd8fc24679bf748
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: Platformer
+  productName: FUCKYOU
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -114,6 +114,7 @@ PlayerSettings:
   xboxEnableGuest: 0
   xboxEnablePIXSampling: 0
   metalFramebufferOnly: 0
+  metalUseMetalDisplayLink: 0
   xboxOneResolution: 0
   xboxOneSResolution: 0
   xboxOneXResolution: 3
@@ -604,14 +605,14 @@ PlayerSettings:
   editorAssembliesCompatibilityLevel: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: Platformer
+  metroPackageName: FUCKYOU
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: Platformer
+  metroApplicationDescription: FUCKYOU
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -682,11 +683,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 80af9951-e705-4938-9ca7-a3678e5d35c8
+  cloudProjectId: 
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Platformer
-  organizationId: ajw2003
+  projectName: 
+  organizationId: 
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

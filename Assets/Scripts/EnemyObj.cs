@@ -1,8 +1,7 @@
 using UnityEngine;
 
-public class Goall : MonoBehaviour
+public class EnemyObj : MonoBehaviour
 {
-    public string NextLevel;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

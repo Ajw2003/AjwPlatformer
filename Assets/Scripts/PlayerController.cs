@@ -1,88 +1,139 @@
-using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using System.Collections;
 
-public class PlayerController : MonoBehaviour
+public class NewMonoBehaviourScript : MonoBehaviour
 {
-    private Rigidbody2D rb; // reference / phone number for the rigidbody attached to the player 
+    private Rigidbody2D _rb;
+
+    public int health = 30;
+   
+    public TMP_Text healthText;
+
+    public bool isGrounded = true;
+
+    public bool hasEnergy = true;
     
-    private Vector2 lastDirection; // the last direction the player moved stored as a vector2
+    public float speed = 10;
 
-    public float speed; // amount of force to exert on player when moving
+    public float mSpeed = 1;
     
-    public float jumpForce =250; // amount of force to exert on player when jumping
+    public float m_vspeed = 1;
 
-    public bool Grounded = true; //bool to check if character is on ground and can jump
+    public float vspeed = 500;
 
-    public TMP_Text coinText; // reference i.e. phone number for coin text, must assign in inspector
+    public float dashSpeed = 25f;
+
+    public bool faceR = true;
+
+    public int coinCounter = 0;
+
+    public Vector2 mov;
+
+    public int n;
     
-    public TMP_Text healthText; // reference i.e. phone number for health text, must assign in inspector
+    private Vector2 dashingDir;
+    private bool isDashing;
+    private TrailRenderer trailRenderer;
 
-    public int coinsCollected = 0; //coins collected value
+    public TMP_Text coinText;
 
-    public int currentHealth;//curent health value
-    
+    private SpriteRenderer _spr_rend;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();// find the rigid body and assign it
-        healthText.text = currentHealth.ToString(); // set the health text to 0
-        coinText.text = coinsCollected.ToString(); // set the coin text to 0
+        _rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.Space) && Grounded)// if space is pressed and player is on ground then jump
+        if (Input.GetKeyDown(KeyCode.X) && hasEnergy)
         {
-            rb.AddForce(Vector2.up * jumpForce);// add force in the up direction and multiply it by the jump force value
-            Grounded = false;// set grounded to false now that character is in air
+            isDashing = true;
+            hasEnergy = false;
+            trailRenderer.emitting = true;
+            var x = Input.GetAxisRaw("Horizontal");
+            var y = Input.GetAxisRaw("Vertical");
+            dashingDir = new Vector2(x, y).normalized;
+            if (dashingDir == Vector2.zero)
+            {
+                dashingDir = new Vector2(transform.localScale.x, 0f);
+            }
+            StartCoroutine(StopDashing());
+        }
+        
+
+        if (isDashing)
+        {
+            _rb.linearVelocity = dashingDir.normalized * dashSpeed;
+            return;
         }
 
-        if (Input.GetKey(KeyCode.A))// if A is pressed move left
+        
+        if (Input.GetKeyDown(KeyCode.Z) && isGrounded)
         {
-            lastDirection = Vector2.left;// set the last direction moved to left
-            rb.AddForce(Vector2.left * speed); // add force in the left direction and multiply by speed value
+            Debug.Log("Move up");
+            _rb.AddForce(Vector2.up * vspeed);
+            isGrounded = false;
+        }
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            _rb.AddForce(Vector2.right * (speed * mSpeed));
+            mov = Vector2.right;
+        }
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            _rb.AddForce(Vector2.left * (speed * m_vspeed));
+            mov = Vector2.left;
+        }
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            _rb.AddForce(Vector2.down * (speed * mSpeed));
+            mov = Vector2.down;
+        }
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            mov = Vector2.up;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        isGrounded = true;
+        hasEnergy = true;
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        isGrounded = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.GetComponent<CollectableObj>())
+        {
+            coinCounter++;
             
         }
 
-        if (Input.GetKey(KeyCode.D)) // if D is pressed move Right
+        if (other.GetComponent<EnemyObj>())
         {
-            lastDirection = Vector2.right;// set the last direction moved to left
-            rb.AddForce(Vector2.right * speed);// add force in the left direction and multiply by speed value
+            health = health - 10;
         }
+        coinText.text = "Coins Collected: " + coinCounter.ToString();
+        healthText.text = "Total Health:" + health.ToString();
 
-        if (Input.GetKey(KeyCode.LeftShift))// if shift pressed 
+        if (health <= 0)
         {
-            rb.AddForce(lastDirection * jumpForce / 10);
+            Destroy(this.gameObject);
         }
     }
-
-    private void OnCollisionEnter2D(Collision2D other)// when colliding with the ground run code bellow
+    private IEnumerator StopDashing()
     {
-        Grounded = true;// set grounded to true when character touches ground 
+        yield return new WaitForSeconds(0.5f);
+        trailRenderer.emitting = false;
+        isDashing = false;
     }
 
-    private void OnTriggerEnter2D(Collider2D other)// when colliding with objects that have their "Is trigger" toggled to on run this code
-    {
-        if (other.GetComponent<Collectable>())// check to see if object collided with is a collectable then run code bellow if true
-        {
-            coinsCollected++;// increase coins collected by 1
-            coinText.text = coinsCollected.ToString();// set the text which shows the coins collected to the number of coins collected
-        }
-        else if (other.GetComponent<Hazard>())// check to see if object collided with is a hazard then run code bellow if true
-        {
-            currentHealth--; // decrease health by 1
-            healthText.text = currentHealth.ToString();// set the text which displays current health to the amount of currentHealth
-            if (currentHealth <= 0)// check to see if health is at or bellow zero then run code bellow if true
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);// get the name of the current scene being used then reload it / respawn the player and objects
-            }
-        }
-        else if (other.GetComponent<Goall>())// check to see if the object collided with is a goal then run the code bellow if true
-        {
-            SceneManager.LoadScene(other.GetComponent<Goall>().NextLevel);// get the name of the next level from the goal and open it transporting the player to that level
-        }
-    }
 }

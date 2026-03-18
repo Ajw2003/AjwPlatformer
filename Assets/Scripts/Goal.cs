@@ -1,7 +1,8 @@
 using UnityEngine;
 
-public class Hazard : MonoBehaviour
+public class Goal : MonoBehaviour
 {
+    public string NextLevel;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
