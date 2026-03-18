@@ -2,29 +2,29 @@ using TMPro;
 using UnityEngine;
 using System.Collections;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D _rb;
 
-    public int health = 30;
+    public int health = 10; // Defines Health value to player, is defined in increments of 10 (full "heart")
    
-    public TMP_Text healthText;
+    public TMP_Text healthText; //defines health to a UI text
 
-    public bool isGrounded = true;
+    public bool isGrounded = true; //boolean defines if player is on ground
 
-    public bool hasEnergy = true;
+    public bool hasEnergy = true; //boolean defines if player has dashed
     
-    public float speed = 10;
+    public float speed = 10; // defines player horizontal speed
 
-    public float mSpeed = 1;
+    public float mSpeed = 1; //defines any modifier to player velocity
     
     public float m_vspeed = 1;
 
     public float vspeed = 500;
 
-    public float dashSpeed = 25f;
+    public float dashSpeed = 10f;
 
-    public bool faceR = true;
+    public bool faceL;
 
     public int coinCounter = 0;
 
@@ -43,6 +43,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
+		trailRenderer = GetComponent<TrailRenderer>();
     }
 
     // Update is called once per frame
@@ -66,8 +67,13 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
         if (isDashing)
         {
-            _rb.linearVelocity = dashingDir.normalized * dashSpeed;
+            _rb.linearVelocity = (dashingDir.normalized * dashSpeed) / 2;
             return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.C) !& isDashing)
+        {
+            Debug.Log("Sword");
         }
 
         
@@ -81,11 +87,13 @@ public class NewMonoBehaviourScript : MonoBehaviour
         {
             _rb.AddForce(Vector2.right * (speed * mSpeed));
             mov = Vector2.right;
+            faceL = false;
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             _rb.AddForce(Vector2.left * (speed * m_vspeed));
             mov = Vector2.left;
+            faceL = true;
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
@@ -96,12 +104,31 @@ public class NewMonoBehaviourScript : MonoBehaviour
         {
             mov = Vector2.up;
         }
+
+        if (faceL)
+        {
+            _spr_rend.flipX = true;
+        }
+        else
+        {
+            _spr_rend.flipX = false;
+        }
+        
+        coinText.text = "Coins Collected: " + coinCounter.ToString();
+        healthText.text = "HP:" + health.ToString();
+
+    
+        if (health <= 0)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
         isGrounded = true;
         hasEnergy = true;
+        isDashing = false;
     }
 
     private void OnCollisionExit2D(Collision2D other)
@@ -121,17 +148,17 @@ public class NewMonoBehaviourScript : MonoBehaviour
         {
             health = health - 10;
         }
-        coinText.text = "Coins Collected: " + coinCounter.ToString();
-        healthText.text = "Total Health:" + health.ToString();
 
-        if (health <= 0)
+        if (other.GetComponent<HealthBoost>())
         {
-            Destroy(this.gameObject);
+            health = health + 10;
         }
+
     }
+
     private IEnumerator StopDashing()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.2f);
         trailRenderer.emitting = false;
         isDashing = false;
     }
