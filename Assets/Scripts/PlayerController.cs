@@ -12,12 +12,18 @@ public class PlayerController : MonoBehaviour
     public float speed; // amount of force to exert on player when moving
     
     public float jumpForce =250; // amount of force to exert on player when jumping
+    
+    public float bulletVelocity = 10;
 
     public bool Grounded = true; //bool to check if character is on ground and can jump
 
     public TMP_Text coinText; // reference i.e. phone number for coin text, must assign in inspector
     
     public TMP_Text healthText; // reference i.e. phone number for health text, must assign in inspector
+    
+    public GameObject bulletPrefab;
+    
+    public Transform bulletSpawn;
 
     public int coinsCollected = 0; //coins collected value
 
@@ -56,6 +62,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift))// if shift pressed 
         {
             rb.AddForce(lastDirection * jumpForce / 10);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+            bullet.GetComponent<Bullet>().lastDirection = lastDirection;
         }
     }
 
