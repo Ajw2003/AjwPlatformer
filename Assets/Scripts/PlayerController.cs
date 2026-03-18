@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.D)) // if D is pressed move Right
         {
-            lastDirection = Vector2.right;// set the last direction moved to left
+            lastDirection = Vector2.right;// set the last direction moved to right
             rb.AddForce(Vector2.right * speed);// add force in the left direction and multiply by speed value
         }
 
@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
         Grounded = true;// set grounded to true when character touches ground 
     }
 
-    private void OnTriggerEnter2D(Collider2D other)// when colliding with objects that have their "Is trigger" toggled to on run this code
+    private void OnTriggerEnter2D(Collider2D other)// when colliding with objects that have their "Is trigger" toggled to on. run this code
     {
         if (other.GetComponent<Collectable>())// check to see if object collided with is a collectable then run code bellow if true
         {
@@ -83,6 +83,11 @@ public class PlayerController : MonoBehaviour
         else if (other.GetComponent<Goall>())// check to see if the object collided with is a goal then run the code bellow if true
         {
             SceneManager.LoadScene(other.GetComponent<Goall>().NextLevel);// get the name of the next level from the goal and open it transporting the player to that level
+        }
+        else if (other.GetComponent<MushroomUp>())
+        {
+            currentHealth++; // / increase health by 1
+            healthText.text = currentHealth.ToString();
         }
     }
 }
